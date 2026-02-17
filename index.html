@@ -1,164 +1,178 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Biblioteca</title>
-  <style>
-    body { font-family: Arial, sans-serif; max-width: 980px; margin: 24px auto; padding: 0 16px; }
-    h1 { margin-bottom: 6px; }
-    .hint { color: #444; margin-top: 0; }
-    .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 16px 0; }
-    input { padding: 10px; width: min(520px, 100%); }
-    table { border-collapse: collapse; width: 100%; }
-    th, td { border-bottom: 1px solid #ddd; padding: 10px; text-align: left; vertical-align: middle; }
-    th { background: #f6f6f6; }
-    img { width: 70px; height: auto; border: 1px solid #ddd; }
-    .btn { display: inline-block; padding: 6px 10px; border: 1px solid #333; border-radius: 6px; text-decoration: none; color: #111; margin-right: 8px; }
-    .btn:hover { background: #f0f0f0; }
-    .muted { color: #666; }
-    .error { color: #b00020; white-space: pre-wrap; }
-  </style>
-</head>
-<body>
-  <h1>Biblioteca</h1>
-  <p class="hint">Se arma sola leyendo /pdf y /portadas del repo, empareja por nombre, y crea links para WebDisplays y WaterFrames.</p>
-
-  <div class="row">
-    <input id="q" placeholder="Buscar por nombre, ejemplo: kybaliones, mate..." />
-    <span class="muted" id="status">Cargando lista...</span>
-  </div>
-
-  <div id="err" class="error"></div>
-
-  <table id="tbl" style="display:none;">
-    <thead>
-      <tr>
-        <th>Portada</th>
-        <th>Documento</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody id="tbody"></tbody>
-  </table>
-
-<script>
-(async function () {
-  // Ajusta aquí si algún día cambias usuario o repo
-  const owner = "victordante19";
-  const repo  = "Libros";
-  const branch = "main";
-
-  // Links “del sitio” (GitHub Pages) para abrir dentro de WebDisplays
-  const pagesBase = `https://${owner}.github.io/${repo}`;
-
-  // GitHub API para listar contenidos de carpetas
-  const apiPdf = `https://api.github.com/repos/${owner}/${repo}/contents/pdf?ref=${branch}`;
-  const apiCovers = `https://api.github.com/repos/${owner}/${repo}/contents/portadas?ref=${branch}`;
-
-  const status = document.getElementById("status");
-  const errBox = document.getElementById("err");
-  const tbl = document.getElementById("tbl");
-  const tbody = document.getElementById("tbody");
-  const q = document.getElementById("q");
-
-  function baseName(filename) {
-    return filename.replace(/\.[^.]+$/, ""); // quita extensión
-  }
-  function pretty(name) {
-    return name.replace(/_/g, " "); // Los_suenos -> Los suenos
-  }
-
-  async function fetchJson(url) {
-    const res = await fetch(url);
-    if (!res.ok) {
-      const text = await res.text();
-      throw new Error(`Error ${res.status} al consultar:\n${url}\n\n${text}`);
-    }
-    return res.json();
-  }
-
-  try {
-    const [pdfList, coverList] = await Promise.all([fetchJson(apiPdf), fetchJson(apiCovers)]);
-
-    // Mapas por nombre base
-    const pdfMap = new Map();
-    for (const f of pdfList) {
-      if (f.type === "file" && f.name.toLowerCase().endsWith(".pdf")) {
-        pdfMap.set(baseName(f.name), f.name);
-      }
-    }
-
-    const coverMap = new Map();
-    for (const f of coverList) {
-      const n = f.name.toLowerCase();
-      if (f.type === "file" && (n.endsWith(".png") || n.endsWith(".jpg") || n.endsWith(".jpeg") || n.endsWith(".webp"))) {
-        coverMap.set(baseName(f.name), f.name);
-      }
-    }
-
-    // Unión de claves
-    const keys = Array.from(new Set([...pdfMap.keys(), ...coverMap.keys()]))
-      .sort((a, b) => a.localeCompare(b));
-
-    if (keys.length === 0) {
-      status.textContent = "No encontré PDFs o portadas en /pdf y /portadas.";
-      return;
-    }
-
-    // Render
-    function render(filterText = "") {
-      const ft = filterText.trim().toLowerCase();
-      tbody.innerHTML = "";
-
-      const filtered = keys.filter(k => pretty(k).toLowerCase().includes(ft) || k.toLowerCase().includes(ft));
-
-      for (const k of filtered) {
-        const pdfFile = pdfMap.get(k);
-        const coverFile = coverMap.get(k);
-
-        const pdfUrl = pdfFile ? `${pagesBase}/pdf/${encodeURIComponent(pdfFile)}` : null;
-        const coverUrl = coverFile ? `${pagesBase}/portadas/${encodeURIComponent(coverFile)}` : null;
-
-        const tr = document.createElement("tr");
-
-        const tdImg = document.createElement("td");
-        if (coverUrl) {
-          const img = document.createElement("img");
-          img.src = coverUrl;
-          img.alt = pretty(k);
-          tdImg.appendChild(img);
-        } else {
-          tdImg.innerHTML = `<span class="muted">Sin portada</span>`;
+    <meta charset="UTF-8">
+    <title>Biblioteca del Servidor</title>
+    <style>
+        /* ESTILOS OPTIMIZADOS PARA MINECRAFT (WebDisplays) */
+        body {
+            background-color: #1a1a1a; /* Fondo oscuro para evitar brillo excesivo con Shaders */
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        const tdName = document.createElement("td");
-        tdName.innerHTML = `<b>${pretty(k)}</b><br><span class="muted">${k}</span>`;
+        h1 {
+            color: #ffca28; /* Dorado estilo Minecraft */
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            font-size: 48px; /* Texto gigante para leerse desde lejos */
+            text-shadow: 2px 2px 0px #000;
+        }
 
-        const tdAct = document.createElement("td");
-        tdAct.innerHTML = `
-          ${pdfUrl ? `<a class="btn" href="${pdfUrl}" target="_blank" rel="noopener">Abrir PDF</a>` : `<span class="muted">Sin PDF</span>`}
-          ${coverUrl ? `<a class="btn" href="${coverUrl}" target="_blank" rel="noopener">Ver portada</a>` : ``}
-        `;
+        p.subtitle {
+            font-size: 24px;
+            color: #aaa;
+            margin-bottom: 40px;
+        }
 
-        tr.appendChild(tdImg);
-        tr.appendChild(tdName);
-        tr.appendChild(tdAct);
-        tbody.appendChild(tr);
-      }
+        /* Contenedor de la cuadrícula de libros */
+        #library-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); /* Tarjetas anchas */
+            gap: 30px;
+            width: 100%;
+            max-width: 1600px;
+        }
 
-      tbl.style.display = "";
-      status.textContent = `Listo, ${filtered.length} item(s).`;
-    }
+        /* Diseño de cada Tarjeta de Libro */
+        .book-card {
+            background-color: #2d2d2d;
+            border: 4px solid #444;
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.2s;
+        }
 
-    render();
-    q.addEventListener("input", () => render(q.value));
+        .book-card:hover {
+            border-color: #ffca28;
+            transform: scale(1.02);
+        }
 
-  } catch (e) {
-    errBox.textContent = String(e);
-    status.textContent = "Falló la carga.";
-  }
-})();
-</script>
+        .book-title {
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            margin: 15px 0;
+            height: 70px; /* Altura fija para alineación */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cover-preview {
+            width: 150px;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border: 2px solid #000;
+            background-color: #000;
+        }
+
+        /* BOTONES - La parte más importante para el Puntero Láser */
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 20px; /* Zona de clic muy grande */
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 10px;
+            cursor: pointer;
+            border: none;
+            display: block;
+        }
+
+        /* Botón de Leer (Acción Principal) */
+        .btn-read {
+            background-color: #4CAF50; /* Verde */
+            color: white;
+            box-shadow: 0 4px 0 #2E7D32; /* Efecto 3D */
+        }
+        .btn-read:active {
+            box-shadow: 0 0 0 #2E7D32;
+            transform: translateY(4px);
+        }
+
+        /* Botón de Portada (Acción Secundaria) */
+        .btn-cover {
+            background-color: #2196F3; /* Azul */
+            color: white;
+            box-shadow: 0 4px 0 #1565C0;
+        }
+        .btn-cover:active {
+            box-shadow: 0 0 0 #1565C0;
+            transform: translateY(4px);
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>🏛️ Biblioteca del Servidor</h1>
+    <p class="subtitle">Usa el Puntero Láser (Clic Derecho) para interactuar</p>
+
+    <div id="library-container">
+        </div>
+
+    <script>
+        // ==========================================
+        // ⚙️ CONFIGURACIÓN: LISTA DE TUS LIBROS
+        // ==========================================
+        // Solo agrega el nombre del archivo AQUÍ (sin .pdf ni .png).
+        // Asegúrate de que existan en las carpetas /pdf/ y /portadas/
+        
+        const misLibros = [
+            "Los_suenos_de_los_que_esta_hecha_la_mate",
+            "Los_ocho_kybaliones_Gabriel_Silva",
+            // Agrega más libros aquí siguiendo el formato: "Nombre_Archivo",
+        ];
+
+        // ==========================================
+        // 🤖 LÓGICA AUTOMÁTICA (NO TOCAR)
+        // ==========================================
+        const container = document.getElementById('library-container');
+        const repoUser = "victordante19"; 
+        const repoName = "Libros";
+        
+        // Base URLs
+        const pdfBase = `./pdf/`;       // Ruta relativa para máxima compatibilidad
+        const imgBase = `./portadas/`;  // Ruta relativa
+
+        misLibros.forEach(nombreLibro => {
+            // Limpiar nombre para mostrarlo bonito (reemplaza guiones bajos por espacios)
+            const tituloLegible = nombreLibro.replace(/_/g, ' ');
+
+            // Crear tarjeta HTML
+            const card = document.createElement('div');
+            card.className = 'book-card';
+
+            card.innerHTML = `
+                <img src="${imgBase}${nombreLibro}.png" alt="Portada" class="cover-preview" onerror="this.src='https://via.placeholder.com/150x220?text=Sin+Portada'">
+                <div class="book-title">${tituloLegible}</div>
+                <div class="btn-group">
+                    <a href="${pdfBase}${nombreLibro}.pdf" class="btn btn-read" target="_self">📖 LEER</a>
+                </div>
+            `;
+
+            container.appendChild(card);
+        });
+    </script>
+
 </body>
 </html>
