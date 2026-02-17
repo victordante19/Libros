@@ -2,13 +2,13 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Biblioteca de VD</title>
+    <title>Biblioteca de VD V3.0</title>
     <style>
         /* =========================================
-           ESTILOS VISUALES (MODO OSCURO REFORZADO)
+           ESTILOS VISUALES (MODO OSCURO V3.0)
            ========================================= */
         body {
-            background-color: #121212; /* Negro profundo */
+            background-color: #101010;
             color: #e0e0e0;
             font-family: 'Segoe UI', Tahoma, sans-serif;
             margin: 0;
@@ -18,8 +18,22 @@
             align-items: center;
         }
 
+        /* ETIQUETA DE VERSIÓN SOLICITADA */
+        .version-tag {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            color: #555;
+            border: 1px solid #333;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
         h1 {
-            color: #ffca28; /* Dorado */
+            color: #ffb300; /* Dorado más intenso */
             text-transform: uppercase;
             letter-spacing: 3px;
             margin-bottom: 10px;
@@ -30,46 +44,42 @@
 
         p.subtitle {
             font-size: 18px;
-            color: #aaa;
+            color: #888;
             margin-bottom: 40px;
-            font-style: italic;
         }
 
-        /* Rejilla responsive */
         #library-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
             gap: 30px;
             width: 100%;
             max-width: 1600px;
         }
 
-        /* Tarjeta de libro */
         .book-card {
-            background-color: #1e1e1e;
+            background-color: #1a1a1a;
             border: 2px solid #333;
-            border-radius: 15px;
+            border-radius: 12px;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            position: relative;
         }
 
         .book-card:hover {
-            border-color: #ffca28;
+            border-color: #ffb300;
             transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(255, 202, 40, 0.2);
+            background-color: #222;
         }
 
-        /* Título del libro */
         .book-title {
             font-size: 20px;
             font-weight: 600;
             text-align: center;
             margin: 15px 0;
-            height: 55px; /* Altura fija */
+            height: 55px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -77,22 +87,20 @@
             overflow: hidden;
         }
 
-        /* Portada */
         .cover-preview {
             width: 160px;
             height: 230px;
             object-fit: cover;
-            border-radius: 8px;
+            border-radius: 6px;
             margin-bottom: 10px;
             border: 2px solid #000;
-            background-color: #111;
+            background-color: #050505;
         }
 
-        /* Botón gigante para el láser */
         .btn {
             width: 100%;
-            padding: 15px 0;
-            font-size: 20px;
+            padding: 16px 0;
+            font-size: 22px;
             font-weight: bold;
             text-align: center;
             text-decoration: none;
@@ -100,97 +108,111 @@
             cursor: pointer;
             border: none;
             display: block;
-            background-color: #2e7d32; /* Verde oscuro */
+            background-color: #2e7d32;
             color: white;
             box-shadow: 0 5px 0 #1b5e20;
             text-transform: uppercase;
-            transition: background 0.2s;
-        }
-
-        .btn:hover {
-            background-color: #388e3c;
         }
 
         .btn:active {
             box-shadow: 0 0 0 #1b5e20;
             transform: translateY(5px);
         }
+
+        /* Texto de depuración por si falla */
+        .debug-text {
+            font-size: 10px;
+            color: #555;
+            margin-top: 5px;
+            word-break: break-all;
+            text-align: center;
+            display: none; /* Se activa si hay error */
+        }
     </style>
 </head>
 <body>
 
+    <div class="version-tag">V03.0</div>
     <h1>🏛️ Biblioteca de VD</h1>
-    <p class="subtitle">Usa el Puntero Láser (Clic Derecho) para leer</p>
+    <p class="subtitle">Sistema Reforzado: Auto-corrección de espacios y formatos</p>
 
-    <div id="library-container">
-        </div>
+    <div id="library-container"></div>
 
     <script>
         // ======================================================
-        // ⚙️ ZONA DE CONFIGURACIÓN (SOLO EDITA ESTO)
+        // ⚙️ ZONA DE CONFIGURACIÓN
         // ======================================================
-        // Escribe el nombre EXACTO del archivo (con espacios, mayúsculas, etc).
-        // El código se encargará de "arreglarlo" para que funcione el link.
+        // INSTRUCCIÓN CLAVE: Copia el nombre EXACTO de GitHub.
+        // Si tiene guiones Y espacios mezclados, ponlos tal cual.
         
         const misLibros = [
-            // LIBRO 1 (Ejemplo PNG simple)
+            // Libro 1 (El que funciona):
             "Los_suenos_de_los_que_esta_hecha_la_mate",
 
-            // LIBRO 2 (Ejemplo con espacios y JPG)
-            // Aquí pones el nombre tal cual lo tienes en GitHub:
-            { nombre: "Los ocho kybaliones Gabriel Silva", ext: "jpg" },
-
-            // Puedes agregar más aquí abajo...
+            // Libro 2 (El Kybalion):
+            // SEGÚN TU FOTO, el nombre real en GitHub es:
+            "Los ocho kybaliones_Gabriel Silva",
+            
+            // Si agregas más, asegúrate de que el nombre sea IDÉNTICO al del archivo
         ];
 
         // ======================================================
-        // 🛡️ MOTOR DE BLINDAJE DE URLS (NO TOCAR)
+        // 🛡️ MOTOR V3.0 CON ITERACIONES DE RESCATE
         // ======================================================
         const container = document.getElementById('library-container');
         const pdfBase = `./pdf/`;
         const imgBase = `./portadas/`;
 
-        misLibros.forEach(item => {
-            let nombreRealArchivo = "";
-            let extensionImg = "png"; // Por defecto es png
+        misLibros.forEach(nombreCrudo => {
+            // 1. Limpieza Visual (Solo para que se vea bonito el título)
+            // Reemplaza guiones bajos por espacios para leerlo bien
+            const tituloVisual = nombreCrudo.replace(/_/g, ' ');
 
-            // Detectar configuración
-            if (typeof item === 'string') {
-                nombreRealArchivo = item;
-            } else {
-                nombreRealArchivo = item.nombre;
-                extensionImg = item.ext || "png";
-            }
-
-            // 1. Crear título visual (Dejamos los espacios para que se lea bonito)
-            // Si tiene guiones bajos, los cambiamos por espacios solo para el título visual
-            const tituloVisual = nombreRealArchivo.replace(/_/g, ' ');
-
-            // 2. BLINDAJE DE URL (La magia técnica)
-            // encodeURIComponent convierte "Gabriel Silva" en "Gabriel%20Silva" automáticamente
-            // Esto permite que el navegador entienda el enlace sin romper el archivo.
-            const nombreSeguro = encodeURIComponent(nombreRealArchivo);
+            // 2. Blindaje de URL (Para el Link y la Imagen)
+            // encodeURIComponent arregla los espacios y caracteres raros automáticamente
+            const nombreSeguro = encodeURIComponent(nombreCrudo);
             
-            // Construir rutas finales
-            const rutaImagen = `${imgBase}${nombreSeguro}.${extensionImg}`;
+            // Rutas base (intentamos PNG primero)
             const rutaPDF = `${pdfBase}${nombreSeguro}.pdf`;
+            const rutaImgPNG = `${imgBase}${nombreSeguro}.png`;
+            const rutaImgJPG = `${imgBase}${nombreSeguro}.jpg`; // Ruta alternativa
 
-            // Crear HTML
+            // Crear tarjeta
             const card = document.createElement('div');
             card.className = 'book-card';
 
-            const imgHTML = `
-                <img src="${rutaImagen}" 
-                     alt="${tituloVisual}" 
-                     class="cover-preview"
-                     onerror="this.onerror=null; this.src='https://via.placeholder.com/160x230/333333/FFFFFF?text=Sin+Imagen';">
-            `;
+            // 3. LOGICA DE IMAGEN INTELIGENTE
+            // Creamos la imagen. Si falla PNG, el script intenta cargar JPG.
+            const img = document.createElement('img');
+            img.className = 'cover-preview';
+            img.alt = tituloVisual;
+            img.src = rutaImgPNG; // Intento 1: PNG
 
-            card.innerHTML = `
-                ${imgHTML}
+            // ITERACIÓN DE ERROR: Si falla el PNG...
+            img.onerror = function() {
+                // ...intenta cargar el JPG
+                if (this.src.includes('.png')) {
+                    console.log("PNG falló, intentando JPG para: " + nombreCrudo);
+                    this.src = rutaImgJPG;
+                } else {
+                    // Si el JPG también falla, muestra imagen de error
+                    this.onerror = null; // Evita bucle infinito
+                    this.src = 'https://via.placeholder.com/160x230/222/555?text=Sin+Img';
+                    // Muestra el nombre real para que el usuario sepa qué archivo falta
+                    card.querySelector('.debug-text').style.display = 'block';
+                }
+            };
+
+            card.appendChild(img);
+
+            // Título y Botón
+            const infoDiv = document.createElement('div');
+            infoDiv.innerHTML = `
                 <div class="book-title">${tituloVisual}</div>
                 <a href="${rutaPDF}" class="btn" target="_self">📖 LEER</a>
+                <div class="debug-text">Archivo buscado:<br>${nombreCrudo}</div>
             `;
+            card.appendChild(infoDiv);
 
             container.appendChild(card);
         });
