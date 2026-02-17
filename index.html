@@ -2,13 +2,12 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Biblioteca del Servidor</title>
-    <style>
-        /* ESTILOS OPTIMIZADOS PARA MINECRAFT (WebDisplays) */
+    <title>Biblioteca de VD</title> <style>
+        /* ESTILOS OPTIMIZADOS PARA MINECRAFT */
         body {
-            background-color: #1a1a1a; /* Fondo oscuro para evitar brillo excesivo con Shaders */
+            background-color: #151515;
             color: #e0e0e0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
             margin: 0;
             padding: 20px;
             display: flex;
@@ -17,35 +16,34 @@
         }
 
         h1 {
-            color: #ffca28; /* Dorado estilo Minecraft */
+            color: #ffca28;
             text-transform: uppercase;
             letter-spacing: 2px;
-            margin-bottom: 10px;
-            font-size: 48px; /* Texto gigante para leerse desde lejos */
+            margin-bottom: 5px;
+            font-size: 42px;
             text-shadow: 2px 2px 0px #000;
+            text-align: center;
         }
 
         p.subtitle {
-            font-size: 24px;
-            color: #aaa;
-            margin-bottom: 40px;
+            font-size: 20px;
+            color: #888;
+            margin-bottom: 30px;
         }
 
-        /* Contenedor de la cuadrícula de libros */
         #library-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); /* Tarjetas anchas */
-            gap: 30px;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 25px;
             width: 100%;
             max-width: 1600px;
         }
 
-        /* Diseño de cada Tarjeta de Libro */
         .book-card {
-            background-color: #2d2d2d;
-            border: 4px solid #444;
-            border-radius: 15px;
-            padding: 20px;
+            background-color: #252525;
+            border: 3px solid #444;
+            border-radius: 12px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -55,119 +53,125 @@
         .book-card:hover {
             border-color: #ffca28;
             transform: scale(1.02);
+            background-color: #2a2a2a;
         }
 
         .book-title {
-            font-size: 28px;
-            font-weight: bold;
-            text-align: center;
-            margin: 15px 0;
-            height: 70px; /* Altura fija para alineación */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .cover-preview {
-            width: 150px;
-            height: 220px;
-            object-fit: cover;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            border: 2px solid #000;
-            background-color: #000;
-        }
-
-        /* BOTONES - La parte más importante para el Puntero Láser */
-        .btn-group {
-            display: flex;
-            gap: 15px;
-            width: 100%;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 20px; /* Zona de clic muy grande */
             font-size: 24px;
             font-weight: bold;
             text-align: center;
+            margin: 15px 0;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.2;
+        }
+
+        .cover-preview {
+            width: 140px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            border: 2px solid #000;
+            background-color: #111; /* Fondo oscuro si no carga */
+        }
+
+        /* Mensaje de error si no carga la imagen */
+        .img-error {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #555;
+            font-size: 12px;
+            padding: 10px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 18px 0;
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
             text-decoration: none;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
             border: none;
             display: block;
+            background-color: #388E3C; /* Verde Minecraft */
+            color: white;
+            box-shadow: 0 4px 0 #1B5E20;
+            text-transform: uppercase;
         }
 
-        /* Botón de Leer (Acción Principal) */
-        .btn-read {
-            background-color: #4CAF50; /* Verde */
-            color: white;
-            box-shadow: 0 4px 0 #2E7D32; /* Efecto 3D */
-        }
-        .btn-read:active {
-            box-shadow: 0 0 0 #2E7D32;
+        .btn:active {
+            box-shadow: 0 0 0 #1B5E20;
             transform: translateY(4px);
         }
-
-        /* Botón de Portada (Acción Secundaria) */
-        .btn-cover {
-            background-color: #2196F3; /* Azul */
-            color: white;
-            box-shadow: 0 4px 0 #1565C0;
-        }
-        .btn-cover:active {
-            box-shadow: 0 0 0 #1565C0;
-            transform: translateY(4px);
-        }
-
     </style>
 </head>
 <body>
 
-    <h1>🏛️ Biblioteca del Servidor</h1>
-    <p class="subtitle">Usa el Puntero Láser (Clic Derecho) para interactuar</p>
+    <h1>🏛️ Biblioteca de VD</h1>
+    <p class="subtitle">Usa el Puntero Láser (Clic Derecho) para leer</p>
 
-    <div id="library-container">
-        </div>
+    <div id="library-container"></div>
 
     <script>
         // ==========================================
-        // ⚙️ CONFIGURACIÓN: LISTA DE TUS LIBROS
+        // ⚙️ CONFIGURACIÓN DE TUS LIBROS
         // ==========================================
-        // Solo agrega el nombre del archivo AQUÍ (sin .pdf ni .png).
-        // Asegúrate de que existan en las carpetas /pdf/ y /portadas/
         
         const misLibros = [
+            // LIBRO 1: Formato simple (Asume que es .png)
             "Los_suenos_de_los_que_esta_hecha_la_mate",
-            "Los_ocho_kybaliones_Gabriel_Silva",
-            // Agrega más libros aquí siguiendo el formato: "Nombre_Archivo",
+
+            // LIBRO 2: EL KYBALION (Aquí estaba el error probable)
+            // Si tu imagen en GitHub es JPG, usa este formato especial con llaves:
+            { nombre: "Los_ocho_kybaliones_Gabriel_Silva", ext: "jpg" },
+            
+            // EJEMPLO: Si subes otro y es PNG, solo pon el nombre entre comillas:
+            // "Nombre_Del_Nuevo_Libro",
         ];
 
         // ==========================================
-        // 🤖 LÓGICA AUTOMÁTICA (NO TOCAR)
+        // 🤖 LÓGICA (No necesitas tocar esto)
         // ==========================================
         const container = document.getElementById('library-container');
-        const repoUser = "victordante19"; 
-        const repoName = "Libros";
-        
-        // Base URLs
-        const pdfBase = `./pdf/`;       // Ruta relativa para máxima compatibilidad
-        const imgBase = `./portadas/`;  // Ruta relativa
+        const pdfBase = `./pdf/`;
+        const imgBase = `./portadas/`;
 
-        misLibros.forEach(nombreLibro => {
-            // Limpiar nombre para mostrarlo bonito (reemplaza guiones bajos por espacios)
-            const tituloLegible = nombreLibro.replace(/_/g, ' ');
+        misLibros.forEach(item => {
+            let nombreArchivo = "";
+            let extensionImg = "png"; // Por defecto PNG
 
-            // Crear tarjeta HTML
+            // Detectar si es texto simple o configuración avanzada
+            if (typeof item === 'string') {
+                nombreArchivo = item;
+            } else {
+                nombreArchivo = item.nombre;
+                extensionImg = item.ext || "png";
+            }
+
+            const tituloLegible = nombreArchivo.replace(/_/g, ' ');
+
             const card = document.createElement('div');
             card.className = 'book-card';
 
+            // Si la imagen falla, muestra un texto en lugar de un cuadro negro roto
+            const imgHTML = `
+                <img src="${imgBase}${nombreArchivo}.${extensionImg}" 
+                     alt="${tituloLegible}" 
+                     class="cover-preview"
+                     onerror="this.style.display='none'; this.parentElement.innerHTML += '<div class=\'cover-preview img-error\'>Sin<br>Imagen<br>(${extensionImg})</div>'">
+            `;
+
             card.innerHTML = `
-                <img src="${imgBase}${nombreLibro}.png" alt="Portada" class="cover-preview" onerror="this.src='https://via.placeholder.com/150x220?text=Sin+Portada'">
+                ${imgHTML}
                 <div class="book-title">${tituloLegible}</div>
-                <div class="btn-group">
-                    <a href="${pdfBase}${nombreLibro}.pdf" class="btn btn-read" target="_self">📖 LEER</a>
-                </div>
+                <a href="${pdfBase}${nombreArchivo}.pdf" class="btn" target="_self">📖 LEER</a>
             `;
 
             container.appendChild(card);
