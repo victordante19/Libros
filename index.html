@@ -2,10 +2,10 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Biblioteca de VD V3.0</title>
+    <title>Biblioteca de VD V4.0</title>
     <style>
         /* =========================================
-           ESTILOS VISUALES (MODO OSCURO V3.0)
+           ESTILOS VISUALES (MODO OSCURO V4.0)
            ========================================= */
         body {
             background-color: #101010;
@@ -16,9 +16,11 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            /* Espacio extra abajo para poder hacer scroll cómodo */
+            padding-bottom: 150px; 
         }
 
-        /* ETIQUETA DE VERSIÓN SOLICITADA */
+        /* ETIQUETA DE VERSIÓN */
         .version-tag {
             position: absolute;
             top: 15px;
@@ -33,7 +35,7 @@
         }
 
         h1 {
-            color: #ffb300; /* Dorado más intenso */
+            color: #ffb300;
             text-transform: uppercase;
             letter-spacing: 3px;
             margin-bottom: 10px;
@@ -65,7 +67,6 @@
             flex-direction: column;
             align-items: center;
             transition: all 0.3s ease;
-            position: relative;
         }
 
         .book-card:hover {
@@ -119,22 +120,62 @@
             transform: translateY(5px);
         }
 
-        /* Texto de depuración por si falla */
         .debug-text {
             font-size: 10px;
             color: #555;
             margin-top: 5px;
             word-break: break-all;
             text-align: center;
-            display: none; /* Se activa si hay error */
+            display: none;
         }
+
+        /* =========================================
+           NUEVO: BOTONES DE SCROLL FLOTANTES
+           ========================================= */
+        .scroll-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000; /* Siempre encima de todo */
+        }
+
+        .scroll-btn {
+            background-color: #ffb300;
+            color: #000;
+            border: 2px solid #b27d00;
+            width: 80px;
+            height: 80px;
+            font-size: 40px;
+            border-radius: 50%; /* Redondos */
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.1s;
+        }
+
+        .scroll-btn:active {
+            transform: scale(0.9);
+            background-color: #ffca28;
+        }
+
     </style>
 </head>
 <body>
 
-    <div class="version-tag">V03.0</div>
+    <div class="version-tag">V04.0</div>
+    
+    <div class="scroll-controls">
+        <button class="scroll-btn" onclick="window.scrollBy({top: -300, behavior: 'smooth'})">⬆️</button>
+        <button class="scroll-btn" onclick="window.scrollBy({top: 300, behavior: 'smooth'})">⬇️</button>
+    </div>
+
     <h1>🏛️ Biblioteca de VD</h1>
-    <p class="subtitle">Sistema Reforzado: Auto-corrección de espacios y formatos</p>
+    <p class="subtitle">Usa las flechas amarillas para bajar y subir</p>
 
     <div id="library-container"></div>
 
@@ -142,70 +183,47 @@
         // ======================================================
         // ⚙️ ZONA DE CONFIGURACIÓN
         // ======================================================
-        // INSTRUCCIÓN CLAVE: Copia el nombre EXACTO de GitHub.
-        // Si tiene guiones Y espacios mezclados, ponlos tal cual.
         
         const misLibros = [
-            // Libro 1 (El que funciona):
             "Los_suenos_de_los_que_esta_hecha_la_mate",
-
-            // Libro 2 (El Kybalion):
-            // SEGÚN TU FOTO, el nombre real en GitHub es:
             "Los ocho kybaliones_Gabriel Silva",
-            
-            // Si agregas más, asegúrate de que el nombre sea IDÉNTICO al del archivo
+            // Agrega más libros aquí...
         ];
 
         // ======================================================
-        // 🛡️ MOTOR V3.0 CON ITERACIONES DE RESCATE
+        // 🛡️ MOTOR V3.0 (Igual que antes)
         // ======================================================
         const container = document.getElementById('library-container');
         const pdfBase = `./pdf/`;
         const imgBase = `./portadas/`;
 
         misLibros.forEach(nombreCrudo => {
-            // 1. Limpieza Visual (Solo para que se vea bonito el título)
-            // Reemplaza guiones bajos por espacios para leerlo bien
             const tituloVisual = nombreCrudo.replace(/_/g, ' ');
-
-            // 2. Blindaje de URL (Para el Link y la Imagen)
-            // encodeURIComponent arregla los espacios y caracteres raros automáticamente
             const nombreSeguro = encodeURIComponent(nombreCrudo);
-            
-            // Rutas base (intentamos PNG primero)
             const rutaPDF = `${pdfBase}${nombreSeguro}.pdf`;
             const rutaImgPNG = `${imgBase}${nombreSeguro}.png`;
-            const rutaImgJPG = `${imgBase}${nombreSeguro}.jpg`; // Ruta alternativa
+            const rutaImgJPG = `${imgBase}${nombreSeguro}.jpg`;
 
-            // Crear tarjeta
             const card = document.createElement('div');
             card.className = 'book-card';
 
-            // 3. LOGICA DE IMAGEN INTELIGENTE
-            // Creamos la imagen. Si falla PNG, el script intenta cargar JPG.
             const img = document.createElement('img');
             img.className = 'cover-preview';
             img.alt = tituloVisual;
-            img.src = rutaImgPNG; // Intento 1: PNG
+            img.src = rutaImgPNG;
 
-            // ITERACIÓN DE ERROR: Si falla el PNG...
             img.onerror = function() {
-                // ...intenta cargar el JPG
                 if (this.src.includes('.png')) {
-                    console.log("PNG falló, intentando JPG para: " + nombreCrudo);
                     this.src = rutaImgJPG;
                 } else {
-                    // Si el JPG también falla, muestra imagen de error
-                    this.onerror = null; // Evita bucle infinito
+                    this.onerror = null;
                     this.src = 'https://via.placeholder.com/160x230/222/555?text=Sin+Img';
-                    // Muestra el nombre real para que el usuario sepa qué archivo falta
                     card.querySelector('.debug-text').style.display = 'block';
                 }
             };
 
             card.appendChild(img);
 
-            // Título y Botón
             const infoDiv = document.createElement('div');
             infoDiv.innerHTML = `
                 <div class="book-title">${tituloVisual}</div>
